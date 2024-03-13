@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Venture</title>
+    <title>To Do</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script src="./app.js"></script>
     <style>
         *{
             padding: 0;
@@ -19,22 +18,21 @@
             background-position: center;
         }
         .contact-container{
-            height: 170vh;
+            height: 100vh;
             display: flex;
             align-items: center;
             justify-content: space-evenly;
         }
-        .contact-left{
+        .contact-left2, .contact-left1, .contact-left-title{
             display: flex;
             flex-direction: column;
             align-items: start;
-            gap: 20px;
+            gap: 15px;
         }
         .contact-left-title h2{
             font-weight: 600;
             color: black;
             font-size: 60px;
-            margin-bottom: 5px;
         }
         .contact-left-title hr{
             border: none;
@@ -58,14 +56,15 @@
             font-size: 20px;
             margin-left: 15px;
         }
-        .contact-left textarea{
+        .contact-left2 textarea{
             height: 140px;
             padding-top: 15px;
             border-radius: 20px;
         }
-        .contact-left button{
+        button{
             display: flex;
             align-items: center;
+            margin-bottom: 20px;
             padding: 15px 30px;
             font-size: 16px;
             color: black;
@@ -78,28 +77,24 @@
 </head>
 <body>
     <div class="contact-container">
-        <div class="contact-left-title">
-            <h2>Venture</h2>
-            <hr>
+        <div class="contact-left">
+            <div class="contact-left-title">
+                <h2>ToDo</h2>
+                <hr>
+            </div>
+            <form action="/display_tasks" method="get" class="contact-left1">
+                <button type="submit">Display Tasks</button>
+            </form>
+            <form method="POST" action="/add_task" class="contact-left2">
+                <label class="labels" for="task">Task :</label>
+                <input class="inputs" type="text" name="task" id="task" required>
+                <label class="labels" for="description">Description :</label>
+                <textarea class="inputs" name="description" id="description" required></textarea>
+                <label class="labels" for="deadline">Deadline :</label>
+                <input class="inputs" type="time" name="deadline" id="deadline" required>
+                <button type="submit">Add Task</button>
+            </form>
         </div>
-        <form action="/display_ideas" method="get">
-            <button type="submit">Display Ideas</button>
-        </form>
-        <form method="post" action="/add_idea" class="contact-left">
-            <label class="labels" for="domain">Task :</label>
-            <input class="inputs" type="text" name="domain" id="domain" required>
-            <label class="labels" for="title">Domain :</label>
-            <input class="inputs" name="title" type="text" id="title" required>
-            <label class="labels" for="ideas">Ideas :</label>
-            <textarea class="inputs" type="text" name="ideas" id="ideas" required></textarea>
-            <label class="labels" for="requirements">Requirements :</label>
-            <textarea class="inputs" type="text" id="requirements" name="requirements" ></textarea>
-            <label class="labels" for="description">Description :</label>
-            <input class="inputs" type="text" name="description" id="description" required>
-            <label class="labels" for="how">How :</label>
-            <input class="inputs" type="text" name="how" id="how" required>
-            <button type="submit">Add Idea</button>
-        </form>
         <div class="contact-right">
             <img src="https://cdn3d.iconscout.com/3d/premium/thumb/businessman-with-to-do-list-4723389-3928044.png" alt="">
         </div>
