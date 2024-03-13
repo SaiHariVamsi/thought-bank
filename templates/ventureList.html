@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Venture List</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
         body {
@@ -62,30 +61,37 @@
 
 <div id="app">
     <h2>Venture List</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Domain</th>
-                <th>Title</th>
-                <th>Ideas</th>
-                <th>Requirements</th>
-                <th>Description</th>
-                <th>How</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for i in range(data_arr[0]|length) %}
+    <form action="/selected_ideas" method="post">
+        <table>
+            <thead>
                 <tr>
-                    <td>{{ data_arr[0][i] }}</td>
-                    <td>{{ data_arr[1][i] }}</td>
-                    <td>{{ data_arr[2][i] }}</td>
-                    <td>{{ data_arr[3][i] }}</td>
-                    <td>{{ data_arr[4][i] }}</td>
-                    <td>{{ data_arr[5][i] }}</td>
+                    <th>Select</th>
+                    <th>Domain</th>
+                    <th>Title</th>
+                    <th>Ideas</th>
+                    <th>Requirements</th>
+                    <th>Description</th>
+                    <th>How</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for i in range(data_arr[0]|length) %}
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="selectedIdeas" value="{{ data_arr[0][i] }}">
+                        </td>
+                        <td>{{ data_arr[0][i] }}</td>
+                        <td>{{ data_arr[1][i] }}</td>
+                        <td>{{ data_arr[2][i] }}</td>
+                        <td>{{ data_arr[3][i] }}</td>
+                        <td>{{ data_arr[4][i] }}</td>
+                        <td>{{ data_arr[5][i] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit">Done</button>
+    </form>
 </div>
 </body>
 </html>

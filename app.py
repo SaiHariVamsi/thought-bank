@@ -157,8 +157,41 @@ def display_ideas():
             reqs.append(x['requirements'])
             descs.append(x['description'])
             hows.append(x['how'])
-    data_arr = [domains, titles, ideases, reqs, descs, hows]
+    data_arr = [titles, domains, ideases, reqs, descs, hows]
     return render_template('ventureList.html', data_arr=data_arr)
+
+@app.route('/selected_tasks', methods = ['POST'])
+def selected_tasks():
+    selected_tasks = request.form.getlist('selectedTasks')
+    for task in selected_tasks:
+        response = pranav.table('todo').delete().eq('task', task).execute()
+        if 'error' not in response:
+            print('Deleted')
+        else:
+            flash(f"Error deleting task with ID {task}")
+    return redirect(url_for('display_tasks'))
+
+@app.route('/selected_thoughts', methods = ['POST'])
+def selected_thoughts():
+    selected_thoughts = request.form.getlist('selectedThoughts')
+    for thought in selected_thoughts:
+        response = pranav.table('random').delete().eq('what', thought).execute()
+        if 'error' not in response:
+            print('Deleted')
+        else:
+            flash(f"Error deleting task with ID {thought}")
+    return redirect(url_for('display_thoughts'))
+
+@app.route('/selected_ideas', methods = ['POST'])
+def selected_ideas():
+    selected_ideas = request.form.getlist('selectedIdeas')
+    for idea in selected_ideas:
+        response = pranav.table('venture').delete().eq('title', idea).execute()
+        if 'error' not in response:
+            print('Deleted')
+        else:
+            flash(f"Error deleting task with ID {idea}")
+    return redirect(url_for('display_ideas'))
 
 if __name__ == '__main__':
     app.run(debug=True)

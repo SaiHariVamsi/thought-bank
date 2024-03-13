@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To-do List</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
         body {
@@ -62,24 +61,31 @@
 
 <div id="app">
     <h2>Todo List</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Task</th>
-                <th>Description</th>
-                <th>Deadline</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for i in range(data_arr[0]|length) %}
+    <form id="taskForm" method="POST" action="/selected_tasks">
+        <table>
+            <thead>
                 <tr>
-                    <td>{{ data_arr[0][i] }}</td>
-                    <td>{{ data_arr[1][i] }}</td>
-                    <td>{{ data_arr[2][i] }}</td>
+                    <th>Select</th>
+                    <th>Task</th>
+                    <th>Description</th>
+                    <th>Deadline</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for i in range(data_arr[0]|length) %}
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="selectedTasks" value="{{ data_arr[0][i] }}">
+                        </td>
+                        <td>{{ data_arr[0][i] }}</td>
+                        <td>{{ data_arr[1][i] }}</td>
+                        <td>{{ data_arr[2][i] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit">Done</button>
+    </form>
 </div>
 </body>
 </html>
