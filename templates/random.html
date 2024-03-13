@@ -24,17 +24,16 @@
             align-items: center;
             justify-content: space-evenly;
         }
-        .contact-left{
+        .contact-left2, .contact-left1, .contact-left-title{
             display: flex;
             flex-direction: column;
             align-items: start;
-            gap: 20px;
+            gap: 15px;
         }
         .contact-left-title h2{
             font-weight: 600;
             color: black;
             font-size: 60px;
-            margin-bottom: 5px;
         }
         .contact-left-title hr{
             border: none;
@@ -58,14 +57,15 @@
             font-size: 20px;
             margin-left: 15px;
         }
-        .contact-left textarea{
+        .contact-left2 textarea{
             height: 140px;
             padding-top: 15px;
             border-radius: 20px;
         }
-        .contact-left button{
+        button{
             display: flex;
             align-items: center;
+            margin-bottom: 20px;
             padding: 15px 30px;
             font-size: 16px;
             color: black;
@@ -81,22 +81,24 @@
 </head>
 <body>
     <div class="contact-container">
-        <div class="contact-left-title">
-            <h2>Random Thoughts</h2>
-            <hr>
+        <div class="contact-left">
+            <div class="contact-left-title">
+                <h2>Random Thoughts</h2>
+                <hr>
+            </div>
+            <form action="/display_thoughts" class="contact-left1">
+                <button type="submit">Display Thoughts</button>
+            </form>
+            <form method="post" action="/add_thought" class="contact-left2">
+                <label class="labels" for="why">Why :</label>
+                <input class="inputs" type="text" name="why" id="why" required>
+                <label class="labels" for="what">What :</label>
+                <textarea class="inputs" name="what" id="what" required></textarea>
+                <label class="labels" for="when">When :</label>
+                <input class="inputs" type="time" id="when" name="when" required>
+                <button type="submit">Add Thought</button>
+            </form>
         </div>
-        <form action="/display_thoughts">
-            <button type="submit">Display Thoughts</button>
-        </form>
-        <form method="post" action="/add_thought" class="contact-left">
-            <label class="labels" for="why">Why :</label>
-            <input class="inputs" type="text" name="why" id="why" required>
-            <label class="labels" for="what">What :</label>
-            <textarea class="inputs" name="what" id="what" required></textarea>
-            <label class="labels" for="when">When :</label>
-            <input class="inputs" type="time" id="when" name="when" required>
-            <button type="submit">Add Thought</button>
-        </form>
         <div class="contact-right">
             <img src="https://www.freepnglogos.com/uploads/thinking-png/thinking-get-started-with-marketing-for-new-retail-business-owners-8.png" alt="">
         </div>
