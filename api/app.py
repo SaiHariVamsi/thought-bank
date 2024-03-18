@@ -1,10 +1,8 @@
 from flask import Flask, render_template, redirect, url_for, request, flash
 from supabase import create_client
-from dotenv import load_dotenv
 import os
 
 
-load_dotenv('.env')
 app = Flask(__name__)
 
 app.secret_key = 'daddy1810'
