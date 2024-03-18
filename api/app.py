@@ -7,7 +7,6 @@ app = Flask(__name__)
 
 app.secret_key = 'daddy1810'
 
-load_dotenv('.env')
 url = os.getenv('SUPABASE_URL')
 key = os.getenv('SUPABASE_API')    
 pranav = create_client(url, key)
