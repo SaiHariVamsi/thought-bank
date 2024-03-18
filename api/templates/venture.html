@@ -3,6 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venture</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        body{
+            font-family: 'Outfit';
+            background: url(https://marketplace.canva.com/EAFCO6pfthY/1/0/1600w/canva-blue-green-watercolor-linktree-background-F2CyNS5sQdM.jpg) no-repeat;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .contact-container{
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center items horizontally */
+            gap: 20px; /* Decrease the gap between items */
+            max-width: 600px;
+        }
+        .contact-left-title h2{
+            font-weight: 600;
+            color: black;
+            font-size: 60px;
+            margin: 0;
+        }
+        .contact-left-title hr{
+            border: none;
+            width: 100%;
+            height: 5px;
+            background-color: black;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .inputs, textarea{
+            width: 100%;
+            height: 60px; /* Increased height */
+            border: none;
+            outline: none;
+            padding-left: 25px;
+            font-weight: 500;
+            color: black;
+            border-radius: 50px;
+            margin-bottom: 20px;
+        }
+        textarea{
+            height: 160px; /* Increased height */
+            padding-top: 15px;
+            border-radius: 20px;
+        }
+        .labels{
+            font-size: 20px;
+            margin-left: 15px;
+        }
+        button{
+            display: flex;
+            align-items: center;
+            padding: 15px 30px;
+            font-size: 16px;
+            color: black;
+            gap: 10px;
+            border: none;
+            border-radius: 50px;
+            background-image: linear-gradient(45deg,rgb(79, 172, 175),#b9e7ee);
+            cursor: pointer;
+            transition: background-image 0.3s ease;
+        }
+        button:hover{
+            background-image: linear-gradient(45deg, rgb(66, 142, 144), #93c7cd);
+        }
+        img{
+            width: 600px;
+            height: 500px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+            margin-left: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="contact-container">
+        <div class="contact-left-title">
+            <h2>Venture</h2>
+            <hr>
+        </div>
+        <form action="/display_ideas" method="get">
+            <button type="submit">Display Ideas</button>
+        </form>
+        <form method="post" action="/add_idea" class="contact-left">
+            <label class="labels" for="domain">Domain :</label>
+            <input class="inputs" type="text" name="domain" id="domain" required>
+            <label class="labels" for="title">Title :</label>
+            <input class="inputs" name="title" type="text" id="title" required>
+            <label class="labels" for="ideas">Ideas :</label>
+            <textarea class="inputs" type="text" name="ideas" id="ideas" required></textarea>
+            <label class="labels" for="requirements">Requirements :</label>
+            <textarea class="inputs" type="text" id="requirements" name="requirements" ></textarea>
+            <label class="labels" for="description">Description :</label>
+            <input class="inputs" type="text" name="description" id="description" required>
+            <label class="labels" for="how">How :</label>
+            <input class="inputs" type="text" name="how" id="how" required>
+            <button type="submit">Add Idea</button>
+        </form>
+    </div>
+    <br>
+    <br>
+    <img src="https://previews.123rf.com/images/unitonevector/unitonevector1904/unitonevector190400742/123603723-organization-has-achieved-its-goal-cartoon-flat-short-term-and-long-term-tasks-men-in-suits-enter.jpg" alt="">
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To Do</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
