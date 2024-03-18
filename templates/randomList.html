@@ -7,34 +7,33 @@
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Outfit';
+            background: url(https://marketplace.canva.com/EAFCO6pfthY/1/0/1600w/canva-blue-green-watercolor-linktree-background-F2CyNS5sQdM.jpg) no-repeat;
+            background-size: cover;
+            background-position: center;
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
-            align-items: center;
             height: 100vh;
         }
-
         #app {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            width: 80%;
-            max-width: 600px;
+            width: 100%;
+            max-width: 1200px;
         }
 
-        h2 {
+        h1 {
             text-align: center;
-            color: #333;
+            color: black;
+            font-size: 50px;
+            margin-bottom: 60px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 40px;
+            font-size: 20px;
         }
 
         th, td {
@@ -42,39 +41,50 @@
             padding: 8px;
             text-align: left;
         }
+        .check{
+            text-align: center;
+        }
 
         th {
-            background-color: #4CAF50;
+            background-color: rgb(79, 172, 175);
             color: white;
         }
-
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
+        tbody{
+            background-color:#f2f2f2;
         }
-
         tr:hover {
-            background-color: #ddd;
+            background-color:rgb(209, 236, 238);
+        }
+        button{
+            display: block;
+            margin: 30px auto;
+            padding: 15px 30px;
+            font-size: 16px;
+            color: black;
+            border: none;
+            border-radius: 50px;
+            background-image: linear-gradient(45deg,rgb(79, 172, 175),#b9e7ee);
         }
     </style>
 </head>
 <body>
 
 <div id="app">
-<h2>Thought List</h2>
+<h1>Thought List</h1>
 <form action="/selected_thoughts" method="post">
     <table>
         <thead>
             <tr>
-                <th>Select</th>
-                <th>What</th>
-                <th>Why</th>
-                <th>When</th>
+                <th class="check">Select</th>
+                <th class="check">What</th>
+                <th class="check">Why</th>
+                <th class="check">When</th>
             </tr>
         </thead>
         <tbody>
             {% for i in range(data_arr[0]|length) %}
                 <tr>
-                    <td>
+                    <td class="check">
                         <input type="checkbox" name="selectedThoughts" value="{{ data_arr[0][i] }}">
                     </td>
                     <td>{{ data_arr[0][i] }}</td>
