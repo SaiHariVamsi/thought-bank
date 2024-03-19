@@ -1,16 +1,13 @@
 from flask import Flask, render_template, redirect, url_for, request, flash
 from supabase import create_client
-import os
-
 
 app = Flask(__name__)
 
 app.secret_key = 'daddy1810'
 
-url = os.getenv('SUPABASE_URL')
-key = os.getenv('SUPABASE_API')    
-pranav = create_client(url, key)
-
+supabase_url = 'https://rprpfogbzweynochfbwk.supabase.co/'
+supabase_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJwcnBmb2diendleW5vY2hmYndrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDUyMjE5MzMsImV4cCI6MjAyMDc5NzkzM30.guuLDU-xv6Heoe9cjwtnL1eBAZbDupB5nFcfn0vko8U'
+pranav = create_client(supabase_url, supabase_key)
 
 curr_user = None
 
@@ -21,6 +18,10 @@ def index():
 @app.route('/login')
 def show_login():
     return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    return render_template('index.html')
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -41,6 +42,10 @@ def login():
 def show_signup():
     return render_template('signup.html')
 
+@app.route('/confirm')
+def confirm():
+    return render_template('confirm.html')
+
 @app.route('/signup', methods=['POST'])
 def signup():
     email = request.form['email']
@@ -50,7 +55,7 @@ def signup():
 
     if 'error' not in response:
         flash('Confirm mail!')
-        return redirect(url_for('login'))
+        return redirect(url_for('confirm'))
     else:
         flash('Error')
 
@@ -160,38 +165,8 @@ def display_ideas():
             reqs.append(x['requirements'])
             descs.append(x['description'])
             hows.append(x['how'])
-    data_arr = [titles, domains, ideases, reqs, descs, hows]
+    data_arr = [domains, titles, ideases, reqs, descs, hows]
     return render_template('ventureList.html', data_arr=data_arr)
 
-@app.route('/selected_tasks', methods = ['POST'])
-def selected_tasks():
-    selected_tasks = request.form.getlist('selectedTasks')
-    for task in selected_tasks:
-        response = pranav.table('todo').delete().eq('task', task).execute()
-        if 'error' not in response:
-            print('Deleted')
-        else:
-            flash(f"Error deleting task with ID {task}")
-    return redirect(url_for('display_tasks'))
-
-@app.route('/selected_thoughts', methods = ['POST'])
-def selected_thoughts():
-    selected_thoughts = request.form.getlist('selectedThoughts')
-    for thought in selected_thoughts:
-        response = pranav.table('random').delete().eq('what', thought).execute()
-        if 'error' not in response:
-            print('Deleted')
-        else:
-            flash(f"Error deleting task with ID {thought}")
-    return redirect(url_for('display_thoughts'))
-
-@app.route('/selected_ideas', methods = ['POST'])
-def selected_ideas():
-    selected_ideas = request.form.getlist('selectedIdeas')
-    for idea in selected_ideas:
-        response = pranav.table('venture').delete().eq('title', idea).execute()
-        if 'error' not in response:
-            print('Deleted')
-        else:
-            flash(f"Error deleting task with ID {idea}")
-    return redirect(url_for('display_ideas'))
+if __name__ == '__main__':
+    app.run(debug=True)
