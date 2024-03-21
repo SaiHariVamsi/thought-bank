@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, request, flash
+from flask import Flask, render_template, redirect, url_for, request, flash, jsonify
 from supabase import create_client
 
 app = Flask(__name__)
@@ -46,6 +46,7 @@ def show_signup():
 def confirm():
     return render_template('confirm.html')
 
+
 @app.route('/signup', methods=['POST'])
 def signup():
     email = request.form['email']
@@ -66,6 +67,16 @@ def lists():
 @app.route('/todo')
 def todo():
     return render_template('todo.html')
+
+@app.route('/guest_login')
+def guest_login():
+    return render_template('guest.html')
+
+@app.route('/guest')
+def guest():
+    global curr_user
+    curr_user = 'guest'
+    return render_template('lists.html')
 
 @app.route('/random')
 def random():
@@ -167,6 +178,36 @@ def display_ideas():
             hows.append(x['how'])
     data_arr = [domains, titles, ideases, reqs, descs, hows]
     return render_template('ventureList.html', data_arr=data_arr)
+
+@app.route('/selected_tasks', methods=['POST', 'GET', 'DELETE'])
+def selected_tasks():
+    tasks = request.form.getlist('selectedTasks')
+    for task in tasks:
+        resp = pranav.table('todo').delete().eq('task', task).execute()
+    if 'error' not in resp:
+        return redirect(url_for('display_tasks')) 
+    
+@app.route('/selected_thoughts', methods=['POST', 'GET', 'DELETE'])
+def selected_thoughts():
+    thoughts = request.form.getlist('selectedThoughts')
+    for thought in thoughts:
+        resp = pranav.table('random').delete().eq('what', thought).execute()
+    if 'error' not in resp:
+        return redirect(url_for('display_thoughts')) 
+    
+@app.route('/selected_ideas', methods=['POST'])
+def selected_ideas():
+    try:
+        ideas = request.form.getlist('selectedIdeas')
+        for idea in ideas:
+            resp = pranav.table('venture').delete().eq('title', idea).execute()
+            if 'error' in resp:
+                return jsonify({'error': resp['error']}), 500
+        print('No prob baby')
+        return redirect(url_for('display_ideas'))
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)
