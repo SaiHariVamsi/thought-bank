@@ -38,6 +38,11 @@ def login():
         flash('Wrong passwords')
         return redirect(url_for('show_login'))  
     
+@app.route('/home_route')
+def home_route():
+    global curr_user
+    return  render_template('lists.html', curr_user=curr_user)
+    
 @app.route('/signup')
 def show_signup():
     return render_template('signup.html')
