@@ -1,13 +1,17 @@
-from flask import Flask, render_template, redirect, url_for, request, flash, jsonify
-from supabase import create_client
+from flask import Flask, render_template, redirect, url_for, request, flash
+from pymongo import MongoClient
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
-
 app.secret_key = 'daddy1810'
 
-supabase_url = 'https://rprpfogbzweynochfbwk.supabase.co/'
-supabase_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJwcnBmb2diendleW5vY2hmYndrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDUyMjE5MzMsImV4cCI6MjAyMDc5NzkzM30.guuLDU-xv6Heoe9cjwtnL1eBAZbDupB5nFcfn0vko8U'
-pranav = create_client(supabase_url, supabase_key)
+# MongoDB Atlas connection string
+mongo_url = "mongodb+srv://gshvamsi:mongoDB@cluster0.lss5ymq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+client = MongoClient(mongo_url)
+db = client['thought-bank']
 
 curr_user = ''
 
@@ -25,44 +29,48 @@ def show_login():
 
 @app.route('/logout')
 def logout():
+    global curr_user
+    curr_user = ''
     return redirect(url_for('index'))
 
 @app.route('/login', methods=['POST'])
-def login():
+def login_post():
     global curr_user
     email = request.form['email']
     password = request.form['password']
 
-    response = pranav.auth.sign_in_with_password({'email':email, 'password':password})
+    logging.debug(f"Attempting to log in user: email={email}")
 
-    if 'error' not in response:
-        curr_user = email
-        return redirect(url_for('lists'))  
-    else:
-        flash('Wrong passwords')
-        return redirect(url_for('show_login'))  
+    user = db.users.find_one({'email': email, 'password': password})
     
+    if user:
+        curr_user = email
+        logging.debug(f"Login successful for user: email={email}")
+        return redirect(url_for('lists'))
+    else:
+        logging.warning(f"Login failed for user: email={email}")
+        flash('Wrong email or password')
+        return redirect(url_for('show_login'))
+
 @app.route('/signup')
 def show_signup():
     return render_template('signup.html')
 
-@app.route('/confirm')
-def confirm():
-    return render_template('confirm.html')
-
-
 @app.route('/signup', methods=['POST'])
-def signup():
+def signup_post():
     email = request.form['email']
     password = request.form['password']
 
-    response = pranav.auth.sign_up({'email':email, 'password':password})
+    logging.debug(f"Attempting to sign up user: email={email}")
 
-    if 'error' not in response:
-        flash('Confirm mail!')
-        return redirect(url_for('confirm'))
-    else:
-        flash('Error')
+    try:
+        db.users.insert_one({'email': email, 'password': password})
+        logging.debug(f"Signup successful for user: email={email}")
+        return redirect(url_for('show_login'))  # Redirect to the confirm page
+    except Exception as e:
+        logging.error(f"Signup failed for user: email={email} - Exception: {e}")
+        flash('Error signing up')
+        return redirect(url_for('show_signup'))
 
 @app.route('/home')
 def lists():
@@ -80,7 +88,7 @@ def guest_login():
 def guest():
     global curr_user
     curr_user = 'GUEST'
-    return render_template('home.html')
+    return render_template('home.html', curr_user=curr_user)
 
 @app.route('/random')
 def random():
@@ -92,78 +100,72 @@ def venture():
 
 @app.route('/add_task', methods=['POST'])
 def add_task():
-    if request.method == 'POST':
-        task = request.form['task']
-        description = request.form['description']
-        deadline = request.form['deadline']
+    task = request.form['task']
+    description = request.form['description']
+    deadline = request.form['deadline']
 
-        response = pranav.table('todo').insert([{'task': task, 'description': description, 'deadline': deadline, 'email':curr_user}]).execute()
-        if 'error' not in response:
-            flash('Task added successfully!')
-            return redirect(url_for('todo')) 
-        else:
-            flash('Error adding task')
-    
-@app.route('/add_thought', methods=['POST', 'GET'])
+    logging.debug(f"Adding task: {task}")
+
+    db.todo.insert_one({'task': task, 'description': description, 'deadline': deadline, 'email': curr_user})
+    flash('Task added successfully!')
+    return redirect(url_for('todo'))
+
+@app.route('/add_thought', methods=['POST'])
 def add_thought():
-    if request.method == 'POST':
-        task = request.form['why']
-        description = request.form['what']
-        deadline = request.form['when']
+    task = request.form['why']
+    description = request.form['what']
+    deadline = request.form['when']
 
-        response = pranav.table('random').insert([{'why': task, 'what': description, 'when': deadline, 'email' : curr_user}]).execute()
-        if 'error' not in response:
-            flash('Thought added successfully!')
-            return redirect(url_for('random')) 
-        else:
-            flash('Error adding task')
+    logging.debug(f"Adding thought: {task}")
+
+    db.random.insert_one({'why': task, 'what': description, 'when': deadline, 'email': curr_user})
+    flash('Thought added successfully!')
+    return redirect(url_for('random'))
 
 @app.route('/add_idea', methods=['POST'])
 def add_idea():
-    if request.method == 'POST':
-        domain = request.form['domain']
-        title = request.form['title']
-        ideas = request.form['ideas']
-        requirements = request.form['requirements']
-        description = request.form['description']
-        how = request.form['how']
+    domain = request.form['domain']
+    title = request.form['title']
+    ideas = request.form['ideas']
+    requirements = request.form['requirements']
+    description = request.form['description']
+    how = request.form['how']
 
-        response = pranav.table('venture').insert({'domain': domain, 'title': title, 'ideas': ideas, 'requirements':requirements, 'description':description, 'how':how, 'email' : curr_user}).execute()
-        if 'error' not in response:
-            flash('Task added successfully!')
-            return redirect(url_for('venture')) 
-        else:
-            flash('Error adding task')
+    logging.debug(f"Adding idea: {title}")
 
-@app.route('/display_tasks', methods = ['GET'])
+    db.venture.insert_one({'domain': domain, 'title': title, 'ideas': ideas, 'requirements': requirements, 'description': description, 'how': how, 'email': curr_user})
+    flash('Idea added successfully!')
+    return redirect(url_for('venture'))
+
+@app.route('/display_tasks', methods=['GET'])
 def display_tasks():
     tasks = []
     descs = []
     dls = []
-    resp = pranav.table('todo').select('*').execute().data
-    for x in resp:
-        if x['email'] == curr_user:
-            tasks.append(x['task'])
-            descs.append(x['description'])
-            dls.append(x['deadline'])
+    logging.debug(f"Displaying tasks for user: {curr_user}")
+    results = db.todo.find({'email': curr_user})
+    for x in results:
+        tasks.append(x['task'])
+        descs.append(x['description'])
+        dls.append(x['deadline'])
     data_arr = [tasks, descs, dls]
     return render_template('todoList.html', data_arr=data_arr)
 
-@app.route('/display_thoughts', methods = ['GET'])
+@app.route('/display_thoughts', methods=['GET'])
 def display_thoughts():
     whats = []
     whys = []
     whens = []
-    resp = pranav.table('random').select('*').execute().data
-    for x in resp:
-        if x['email'] == curr_user:
-            whats.append(x['what'])
-            whys.append(x['why'])
-            whens.append(x['when'])
+    logging.debug(f"Displaying thoughts for user: {curr_user}")
+    results = db.random.find({'email': curr_user})
+    for x in results:
+        whats.append(x['what'])
+        whys.append(x['why'])
+        whens.append(x['when'])
     data_arr = [whats, whys, whens]
     return render_template('randomList.html', data_arr=data_arr)
 
-@app.route('/display_ideas', methods = ['GET'])
+@app.route('/display_ideas', methods=['GET'])
 def display_ideas():
     domains = []
     titles = []
@@ -171,44 +173,38 @@ def display_ideas():
     reqs = []
     descs = []
     hows = []
-    resp = pranav.table('venture').select('*').execute().data
-    for x in resp:
-        if x['email'] == curr_user:
-            domains.append(x['domain'])
-            titles.append(x['title'])
-            ideases.append(x['ideas'])
-            reqs.append(x['requirements'])
-            descs.append(x['description'])
-            hows.append(x['how'])
+    logging.debug(f"Displaying ideas for user: {curr_user}")
+    results = db.venture.find({'email': curr_user})
+    for x in results:
+        domains.append(x['domain'])
+        titles.append(x['title'])
+        ideases.append(x['ideas'])
+        reqs.append(x['requirements'])
+        descs.append(x['description'])
+        hows.append(x['how'])
     data_arr = [titles, domains, ideases, reqs, descs, hows]
     return render_template('ventureList.html', data_arr=data_arr)
 
-@app.route('/selected_tasks', methods=['POST', 'GET', 'DELETE'])
+@app.route('/selected_tasks', methods=['POST', 'DELETE'])
 def selected_tasks():
     tasks = request.form.getlist('selectedTasks')
     for task in tasks:
-        resp = pranav.table('todo').delete().eq('task', task).execute()
-    if 'error' not in resp:
-        return redirect(url_for('display_tasks')) 
-    
-@app.route('/selected_thoughts', methods=['POST', 'GET', 'DELETE'])
+        db.todo.delete_one({'task': task})
+    return redirect(url_for('display_tasks'))
+
+@app.route('/selected_thoughts', methods=['POST', 'DELETE'])
 def selected_thoughts():
     thoughts = request.form.getlist('selectedThoughts')
     for thought in thoughts:
-        print(thought)
-        resp = pranav.table('random').delete().eq('what', thought).execute()
-    if 'error' not in resp:
-        return redirect(url_for('display_thoughts')) 
-    
-@app.route('/selected_ideas', methods=['POST', 'GET', 'DELETE'])
+        db.random.delete_one({'what': thought})
+    return redirect(url_for('display_thoughts'))
+
+@app.route('/selected_ideas', methods=['POST', 'DELETE'])
 def selected_ideas():
     ideas = request.form.getlist('selectedIdeas')
     for idea in ideas:
-        resp = pranav.table('venture').delete().eq('title', idea).execute()
-    if 'error' not in resp:
-        #return 'sucess'
-        return redirect(url_for('display_ideas'))
+        db.venture.delete_one({'title': idea})
+    return redirect(url_for('display_ideas'))
 
 if __name__ == '__main__':
     app.run(debug=True)
-
