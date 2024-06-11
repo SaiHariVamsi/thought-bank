@@ -68,9 +68,19 @@ function Todo() {
       setErrors({ submit: "An error occurred. Please try again later." });
     }
   }
+  
+  function displayTasks() {
+    navigate('/tasks');
+    return;
+  }
 
   return (
     <section className="flex flex-row">
+      <button onClick={displayTasks}
+            className="w-full sm:w-auto px-9 py-1.5 text-[12px] text-center text-white bg-black hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg"
+          >
+            View Tasks
+          </button>
       <form className="flex flex-col justify-center items-center" onSubmit={handleAddTask}>
         <div className="middle p-10 shadow-right-bottom rounded-lg">
           <div className="mt-6 grid grid-cols-1 gap-8">
