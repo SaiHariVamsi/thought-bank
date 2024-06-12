@@ -45,7 +45,7 @@ function Todo() {
       user: userData.email,
     };
 
-    console.log("Sending task data:", todoData);
+    //console.log("Sending task data:", todoData);
 
     try {
       const response = await fetch("http://localhost:1338/api/todo", {
@@ -57,8 +57,11 @@ function Todo() {
       });
 
       const data = await response.json();
-      console.log("Server response:", data);
+      //console.log("Server response:", data);
       if (data.status === "ok") {
+        setTask("");
+        setDescription("");
+        setDeadline("");
         navigate("/todo", { replace: true });
       } else {
         setErrors({ submit: "Error occurred while adding the task." });

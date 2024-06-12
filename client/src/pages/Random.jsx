@@ -63,6 +63,9 @@ function Random() {
       const data = await response.json();
       console.log("Server response:", data);
       if (data.status === "ok") {
+        setWhat("");
+        setWhen("");
+        setWhy("");
         navigate("/random", { replace: true });
       } else {
         setErrors({ submit: "Error occurred while adding the thought." });

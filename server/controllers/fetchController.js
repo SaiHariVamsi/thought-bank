@@ -1,5 +1,3 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const Todo = require('../models/todoModel');
 const Random = require('../models/randomModel');
 const Venture = require('../models/ventureModel');

@@ -21,6 +21,18 @@ const VentureList = () => {
     fetchVentures();
   }, [navigate]);
 
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this idea?');
+    if (confirmDelete) {
+      try {
+        await axios.delete(`http://localhost:1338/api/ideas/${id}`);
+        setVentures(ventures.filter(venture => venture._id !== id));
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
+
   return (
     <section>
       <div>
@@ -39,6 +51,7 @@ const VentureList = () => {
                   <th>Requirements</th>
                   <th>Description</th>
                   <th>How</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody className="relative bg-slate-400">
@@ -50,6 +63,9 @@ const VentureList = () => {
                     <td>{venture.requirements}</td>
                     <td>{venture.description}</td>
                     <td>{venture.how}</td>
+                    <td>
+                      <button onClick={() => handleDelete(venture._id)}>Delete</button>
+                    </td>
                   </tr>
                 ))}
                 {Array.from({ length: 14 }).map((_, index) => (

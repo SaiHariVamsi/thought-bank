@@ -21,6 +21,18 @@ const RandomList = () => {
     fetchThoughts();
   }, [navigate]);
 
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this thought?');
+    if (confirmDelete) {
+      try {
+        await axios.delete(`http://localhost:1338/api/thoughts/${id}`);
+        setThoughts(thoughts.filter(thought => thought._id !== id));
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
+
   return (
     <section>
       <div>
@@ -36,6 +48,7 @@ const RandomList = () => {
                   <th>What</th>
                   <th>Why</th>
                   <th>How</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody className="relative bg-slate-400">
@@ -44,6 +57,9 @@ const RandomList = () => {
                     <td>{thought.what}</td>
                     <td>{thought.why}</td>
                     <td>{thought.when}</td>
+                    <td>
+                      <button onClick={() => handleDelete(thought._id)}>Delete</button>
+                    </td>
                   </tr>
                 ))}
                 {Array.from({ length: 14 }).map((_, index) => (

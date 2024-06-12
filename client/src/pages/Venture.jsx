@@ -69,6 +69,12 @@ function Venture() {
       const data = await response.json();
       console.log("Server response:", data);
       if (data.status === "ok") {
+        setDescription("");
+        setDomain("");
+        setIdeas("");
+        setTitle("");
+        setRequirements("");
+        setHow("");
         navigate("/venture", { replace: true });
       } else {
         setErrors({ submit: "Error occurred while adding the idea." });
