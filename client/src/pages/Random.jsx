@@ -61,7 +61,7 @@ function Random() {
       });
 
       const data = await response.json();
-      console.log("Server response:", data);
+      //console.log("Server response:", data);
       if (data.status === "ok") {
         setWhat("");
         setWhen("");

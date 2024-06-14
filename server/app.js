@@ -6,6 +6,7 @@ const userRoutes = require('./routes/userRoutes.js');
 const addRoutes = require('./routes/addRoutes.js');
 const fetchRoutes = require('./routes/fetchRoutes.js');
 const deleteRoutes = require('./routes/deleteRoutes.js');
+const updateRoutes = require('./routes/updateRoutes.js');
 const { connectDB } = require('./config/db.js');
 
 const app = express();
@@ -26,6 +27,7 @@ app.use('/api/', userRoutes);
 app.use('/api/', addRoutes);
 app.use('/api/', fetchRoutes);
 app.use('/api/', deleteRoutes);
+app.use('/api/', updateRoutes);
 
 const PORT = 1338;
 

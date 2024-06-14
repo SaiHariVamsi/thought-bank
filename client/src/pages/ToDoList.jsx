@@ -5,7 +5,7 @@ import axios from 'axios';
 const TodoList = () => {
   const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
-  const [editTask, setEditTask] = useState(null);
+  const [editTaskId, setEditTaskId] = useState(null);
   const [taskForm, setTaskForm] = useState({ task: '', description: '', deadline: '' });
 
   useEffect(() => {
@@ -35,17 +35,17 @@ const TodoList = () => {
   };
 
   const handleEdit = (task) => {
-    setEditTask(true);
+    setEditTaskId(task._id);
     setTaskForm({ task: task.task, description: task.description, deadline: task.deadline });
   };
 
-  const handleUpdate = async (e) => {
+  const handleUpdate = async (e, id) => {
     e.preventDefault();
     try {
       const updatedTask = { ...taskForm };
-      const res = await axios.put(`http://localhost:1338/api/tasks/${editTask._id}`, updatedTask);
-      setTasks(tasks.map(task => task._id === editTask._id ? res.data : task));
-      setEditTask(null);
+      const res = await axios.put(`http://localhost:1338/api/tasks/${id}`, updatedTask);
+      setTasks(tasks.map(task => task._id === id ? res.data : task));
+      setEditTaskId(null);
     } catch (err) {
       console.log(err);
     }
@@ -76,12 +76,50 @@ const TodoList = () => {
               <tbody className="relative bg-slate-400">
                 {tasks.map(task => (
                   <tr key={task._id} className="bg-white">
-                    <td>{task.task}</td>
-                    <td>{task.description}</td>
-                    <td>{task.deadline}</td>
-                    <td>
-                      <button onClick={() => handleDelete(task._id)}>Delete</button>
-                    </td>
+                    {editTaskId === task._id ? (
+                      <>
+                        <td>
+                          <input
+                            type="text"
+                            name="task"
+                            value={taskForm.task}
+                            onChange={handleChange}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            name="description"
+                            value={taskForm.description}
+                            onChange={handleChange}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="date"
+                            name="deadline"
+                            value={taskForm.deadline}
+                            onChange={handleChange}
+                          />
+                        </td>
+                        <td>
+                          <button onClick={(e) => handleUpdate(e, task._id)}>Save</button>
+                          <br />
+                          <button onClick={() => setEditTaskId(null)}>Cancel</button>
+                        </td>
+                      </>
+                    ) : (
+                      <>
+                        <td>{task.task}</td>
+                        <td>{task.description}</td>
+                        <td>{task.deadline}</td>
+                        <td>
+                          <button onClick={() => handleEdit(task)}>Update</button>
+                          <br />
+                          <button onClick={() => handleDelete(task._id)}>Delete</button>
+                        </td>
+                      </>
+                    )}
                   </tr>
                 ))}
                 {Array.from({ length: 14 }).map((_, index) => (
