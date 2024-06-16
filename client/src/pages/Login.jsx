@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+/*import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import validate from "../components/validationLogin";
 
@@ -99,6 +99,88 @@ function Login() {
           </p>
         </form>
     </section>
+  );
+}
+
+export default Login;*/
+
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import validate from "../components/validationLogin";
+import '../styles/loginStyles.css'; 
+
+function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
+
+  async function handleLoginUser(event) {
+    event.preventDefault();
+
+    const validationData = { email, password };
+    const validationErrors = validate(validationData);
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) {
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:1338/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(validationData),
+      });
+
+      const data = await response.json();
+      if (data.status === "ok") {
+        localStorage.setItem('token', data.token);
+        navigate("/");
+      } else {
+        setErrors({ submit: "Please enter valid email and password" });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setErrors({ submit: "An error occurred. Please try again later." });
+    }
+  }
+
+  return (
+    <div className="wrapper">
+      <form onSubmit={handleLoginUser}>
+        <h1>Login</h1>
+        <div className="input-box">
+          <input
+            type="text"
+            name="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <i className='bx bxs-user'></i>
+          {errors.email && <span className="errors">{errors.email}</span>}
+        </div>
+        <div className="input-box">
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <i className='bx bxs-lock-alt'></i>
+          {errors.password && <span className="errors">{errors.password}</span>}
+        </div>
+        <button type="submit" className="btn">Log In</button>
+        {errors.submit && <span className="errors">{errors.submit}</span>}
+        <div className="register-link">
+          <p>Don't have an account? <Link to="/signup">Click here</Link></p>
+        </div>
+      </form>
+    </div>
   );
 }
 

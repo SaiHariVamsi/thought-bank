@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+/*import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import validate from "../components/validationSignup";
 
@@ -117,4 +117,103 @@ function Signup() {
   );
 }
 
+export default Signup;*/
+
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import validate from "../components/validationSignup";
+import '../styles/signupStyles.css';
+
+function Signup() {
+  const [email, setEmail] = useState("");
+  const [createPassword, setCreatePassword] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
+
+  async function registerUser(event) {
+    event.preventDefault();
+
+    const validationData = { email, createPassword, password };
+    const validationErrors = validate(validationData);
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) {
+      return;
+    }
+
+    if (password !== createPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:1338/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(validationData),
+      });
+
+      const data = await response.json();
+      if (data.message === "Email already exists") {
+        alert("Email already exists");
+        navigate('/signup');
+      } else if (response.ok) {
+        navigate('/login');
+      } else {
+        console.error('Error in response:', data.message);
+      }
+    } catch (error) {
+      console.error("Error sending data to backend:", error);
+    }
+  }
+
+  return (
+    <div className="wrapper">
+      <form onSubmit={registerUser}>
+        <h1>Sign Up</h1>
+        <div className="input-box">
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <i className='bx bxs-user'></i>
+          {errors.email && <span className="errors">{errors.email}</span>}
+        </div>
+        <div className="input-box">
+          <input
+            type="password"
+            name="createPassword"
+            placeholder="Create Password"
+            value={createPassword}
+            onChange={(e) => setCreatePassword(e.target.value)}
+            required
+          />
+          <i className='bx bxs-lock-alt'></i>
+          {errors.createPassword && <span className="errors">{errors.createPassword}</span>}
+        </div>
+        <div className="input-box">
+          <input
+            type="password"
+            name="password"
+            placeholder="Confirm Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <i className='bx bxs-lock-alt'></i>
+          {errors.password && <span className="errors">{errors.password}</span>}
+        </div>
+        <button type="submit" className="btn">Sign Up</button>
+        {errors.submit && <span className="errors">{errors.submit}</span>}
+      </form>
+    </div>
+  );
+}
+
 export default Signup;
+
