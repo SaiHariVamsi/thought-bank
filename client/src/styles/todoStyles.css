@@ -6,7 +6,7 @@
   
   body {
     font-family: 'Outfit';
-    background: url(https://marketplace.canva.com/EAFCO6pfthY/1/0/1600w/canva-blue-green-watercolor-linktree-background-F2CyNS5sQdM.jpg) no-repeat;
+    background: url('../assets/TBbackground.png') no-repeat;
     background-size: cover;
     background-position: center;
   }

@@ -82,6 +82,9 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import TB from '../assets/TB.png';
 import '../styles/homeStyles.css';
+import Todo from '../assets/Todo.png';
+import RandomThoughts from '../assets/RandomThoughts.png';
+import Venture from '../assets/Venture.png';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -144,6 +147,15 @@ const Home = () => {
             with around 86 billion neurons, each forming thousands of connections. The actual number of thoughts
             a person has in a day is challenging to quantify accurately, as thoughts can from fleeting and subconscious
             to deliberate and focused. We are here to provide some assistance for you to organize all these thoughts and also to complete this project.
+            <br />
+            <br />
+            <br />
+            Here are the categories into which you can organise you daily activities and thoughts:
+            <ul>
+            <li>Todo List</li>
+            <li>Random Thoughts</li>
+            <li>Venture Projects</li>
+          </ul>
           </p>
         </div>
         <a href="#utility">
@@ -155,17 +167,17 @@ const Home = () => {
         <div className="row">
           <div className="start-col">
             <a href="/todo">
-              <img src="https://i.pinimg.com/originals/44/e7/8d/44e78d1f020b30e73ba169510dd6460e.jpg" alt="Todo" />
+              <img src={Todo} alt="Todo" />
             </a>
           </div>
           <div className="start-col">
             <a href="/random">
-              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJMo-FB6puAGXXzxk4qQJ55GsujQYxo1IT2w&usqp=CAU" alt="Random" />
+              <img src={RandomThoughts} alt="Random" />
             </a>
           </div>
           <div className="start-col">
             <a href="/venture">
-              <img src="https://media.licdn.com/dms/image/C560BAQEEIT13hQAv-g/company-logo_200_200/0/1630641488754?e=2147483647&v=beta&t=lDoaN0NJYCdGGG1ldpnMlAow6iDkkqtyvFLlcty0MiI" alt="Venture" />
+              <img src={Venture} alt="Venture" />
             </a>
           </div>
         </div>

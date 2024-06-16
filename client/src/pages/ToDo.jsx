@@ -1,29 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
-import '../styles/todoStyles.css'; // Import your CSS file
+import { useNavigate } from 'react-router-dom';
+import '../styles/todoStyles.css'; // Ensure the CSS file path is correct
 
 const Todo = () => {
   const [task, setTask] = useState('');
   const [description, setDescription] = useState('');
-  const [deadline, setDeadline] = useState('');
+  const [deadlineTime, setDeadlineTime] = useState('');
+  const [deadlineDay, setDeadlineDay] = useState('');
   const [errors, setErrors] = useState({});
   const [userData, setUserData] = useState({});
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
-  async function fetchUserData() {
-    try {
-      const response = await axios.get('http://localhost:1338/api/user', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      setUserData(response.data.user);
-    } catch (error) {
-      console.error('Error fetching user data:', error);
+  useEffect(() => {
+    async function fetchUserData() {
+      try {
+        const response = await axios.get('http://localhost:1338/api/user', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        setUserData(response.data.user);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        setErrors({ ...errors, userData: 'Failed to load user data. Please try again later.' });
+      }
     }
-  }
+
+    fetchUserData();
+  }, [token]);
 
   async function handleAddTask(event) {
     event.preventDefault();
@@ -33,10 +39,11 @@ const Todo = () => {
       return;
     }
 
+    const deadline = `${deadlineDay}T${deadlineTime}`;
     const todoData = {
-      task: task,
-      description: description,
-      deadline: deadline,
+      task,
+      description,
+      deadline,
       user: userData.email,
     };
 
@@ -53,7 +60,8 @@ const Todo = () => {
       if (data.status === 'ok') {
         setTask('');
         setDescription('');
-        setDeadline('');
+        setDeadlineDay('');
+        setDeadlineTime('');
         navigate('/todo', { replace: true });
       } else {
         setErrors({ submit: 'Error occurred while adding the task.' });
@@ -64,9 +72,10 @@ const Todo = () => {
     }
   }
 
-  useEffect(() => {
-    fetchUserData();
-  }, []);
+  function displayTasks() {
+    navigate('/tasks');
+    return;
+  }
 
   return (
     <div className="contact-container">
@@ -75,8 +84,8 @@ const Todo = () => {
           <h2>ToDo</h2>
           <hr />
         </div>
-        <form className="contact-left1" onSubmit={handleAddTask}>
-          <button type="submit">Add Task</button>
+        <form className="contact-left1" onSubmit={displayTasks}>
+          <button type="submit">View Task</button>
         </form>
         <form className="contact-left2" onSubmit={handleAddTask}>
           <input
@@ -98,25 +107,38 @@ const Todo = () => {
             placeholder='Description'
             required
           ></textarea>
-          <label className="labels" htmlFor="deadline">
-            Deadline :
+          <label className="labels" htmlFor="deadlineDay">
+            Deadline Date:
+          </label>
+          <input
+            className="inputs"
+            type="date"
+            name="deadlineDay"
+            id="deadlineDay"
+            value={deadlineDay}
+            onChange={(e) => setDeadlineDay(e.target.value)}
+            required
+          />
+          <label className="labels" htmlFor="deadlineTime">
+            Deadline Time:
           </label>
           <input
             className="inputs"
             type="time"
-            name="deadline"
-            id="deadline"
-            value={deadline}
-            onChange={(e) => setDeadline(e.target.value)}
+            name="deadlineTime"
+            id="deadlineTime"
+            value={deadlineTime}
+            onChange={(e) => setDeadlineTime(e.target.value)}
             required
           />
           <button type="submit">Add Task</button>
         </form>
+        {errors.submit && <div className="error">{errors.submit}</div>}
       </div>
       <div className="contact-right">
         <img
           src="https://cdn3d.iconscout.com/3d/premium/thumb/businessman-with-to-do-list-4723389-3928044.png"
-          alt=""
+          alt="ToDo Illustration"
         />
       </div>
     </div>
