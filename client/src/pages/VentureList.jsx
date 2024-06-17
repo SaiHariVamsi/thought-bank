@@ -18,7 +18,12 @@ const VentureList = () => {
   useEffect(() => {
     const fetchVentures = async () => {
       try {
-        const res = await axios.get('http://localhost:1338/api/ideas');
+        const token = localStorage.getItem('token'); // Retrieve the token from local storage
+        const res = await axios.get('http://localhost:1338/api/ideas', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setVentures(res.data);
       } catch (err) {
         console.log(err);
@@ -33,7 +38,12 @@ const VentureList = () => {
     const confirmDelete = window.confirm('Are you sure you want to delete this idea?');
     if (confirmDelete) {
       try {
-        await axios.delete(`http://localhost:1338/api/ideas/${id}`);
+        const token = localStorage.getItem('token'); // Retrieve the token from local storage
+        await axios.delete(`http://localhost:1338/api/ideas/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setVentures(ventures.filter(venture => venture._id !== id));
       } catch (err) {
         console.log(err);
@@ -56,8 +66,13 @@ const VentureList = () => {
   const handleUpdate = async (e, id) => {
     e.preventDefault();
     try {
+      const token = localStorage.getItem('token'); // Retrieve the token from local storage
       const updatedVenture = { ...ventureForm };
-      const res = await axios.put(`http://localhost:1338/api/ideas/${id}`, updatedVenture);
+      const res = await axios.put(`http://localhost:1338/api/ideas/${id}`, updatedVenture, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setVentures(ventures.map(venture => venture._id === id ? res.data : venture));
       setEditVentureId(null);
     } catch (err) {

@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const saltRounds = 10;
+const {sendWelcomeEmail} = require('../mails/welcomeMail');
 
 const signUp = async (req, res) => {
     try {
@@ -28,6 +29,12 @@ const signUp = async (req, res) => {
         console.error('Signup error:', err);
         res.status(500).json({ status: 'error', message: 'Failed to register user' });
     }
+    try {
+        await sendWelcomeEmail(email);
+        res.status(201).send({ message: 'User registered and welcome email sent!' });
+      } catch (error) {
+        res.status(500).send({ message: 'User registered but failed to send email.' });
+      }
 };
 
 const login = async (req, res) => {

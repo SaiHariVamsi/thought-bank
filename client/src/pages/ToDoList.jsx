@@ -11,7 +11,12 @@ const TodoList = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const res = await axios.get('http://localhost:1338/api/tasks');
+        const token = localStorage.getItem('token'); // Retrieve the token from local storage
+        const res = await axios.get('http://localhost:1338/api/tasks', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setTasks(res.data);
       } catch (err) {
         console.log(err);
@@ -26,7 +31,12 @@ const TodoList = () => {
     const confirmDelete = window.confirm('Are you sure you want to delete this task?');
     if (confirmDelete) {
       try {
-        await axios.delete(`http://localhost:1338/api/tasks/${id}`);
+        const token = localStorage.getItem('token');
+        await axios.delete(`http://localhost:1338/api/tasks/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setTasks(tasks.filter(task => task._id !== id));
       } catch (err) {
         console.log(err);
@@ -42,8 +52,13 @@ const TodoList = () => {
   const handleUpdate = async (e, id) => {
     e.preventDefault();
     try {
+      const token = localStorage.getItem('token');
       const updatedTask = { ...taskForm };
-      const res = await axios.put(`http://localhost:1338/api/tasks/${id}`, updatedTask);
+      const res = await axios.put(`http://localhost:1338/api/tasks/${id}`, updatedTask, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setTasks(tasks.map(task => task._id === id ? res.data : task));
       setEditTaskId(null);
     } catch (err) {

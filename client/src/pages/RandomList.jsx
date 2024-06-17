@@ -11,7 +11,12 @@ const RandomList = () => {
   useEffect(() => {
     const fetchThoughts = async () => {
       try {
-        const res = await axios.get('http://localhost:1338/api/thoughts');
+        const token = localStorage.getItem('token'); // Retrieve the token from local storage
+        const res = await axios.get('http://localhost:1338/api/thoughts', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setThoughts(res.data);
       } catch (err) {
         console.log(err);
@@ -26,7 +31,12 @@ const RandomList = () => {
     const confirmDelete = window.confirm('Are you sure you want to delete this thought?');
     if (confirmDelete) {
       try {
-        await axios.delete(`http://localhost:1338/api/thoughts/${id}`);
+        const token = localStorage.getItem('token'); // Retrieve the token from local storage
+        await axios.delete(`http://localhost:1338/api/thoughts/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setThoughts(thoughts.filter(thought => thought._id !== id));
       } catch (err) {
         console.log(err);
@@ -42,8 +52,13 @@ const RandomList = () => {
   const handleUpdate = async (e, id) => {
     e.preventDefault();
     try {
+      const token = localStorage.getItem('token'); // Retrieve the token from local storage
       const updatedThought = { ...thoughtForm };
-      const res = await axios.put(`http://localhost:1338/api/thoughts/${id}`, updatedThought);
+      const res = await axios.put(`http://localhost:1338/api/thoughts/${id}`, updatedThought, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setThoughts(thoughts.map(thought => thought._id === id ? res.data : thought));
       setEditThoughtId(null);
     } catch (err) {
