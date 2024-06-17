@@ -12,8 +12,9 @@ const todo = async (req, res) => {
             return res.status(400).json({ message: 'User is required' });
         }
 
-        const existingTask = await Todo.findOne({ task });
-        if (existingTask) {
+        const existingTask = await Todo.findOne({ $or: [{ task }] });
+        const existingUser = await Todo.findOne({ user });
+        if (existingTask && existingUser) {
             return res.status(400).json({ message: 'Task already exists' });
         }
 
@@ -42,7 +43,8 @@ const random = async (req, res) => {
         } = req.body;
 
         const existingThought = await Random.findOne({ $or: [{ what }] });
-        if (existingThought) {
+        const existingUser = await Random.findOne({ user });
+        if (existingThought && existingUser) {
             return res.status(400).json({ message: 'Thought already exists' });
         }
 
@@ -74,7 +76,8 @@ const venture = async (req, res) => {
         } = req.body;
 
         const existingIdea = await Venture.findOne({ $or: [{ title }] });
-        if (existingIdea) {
+        const existingUser = await Venture.findOne({ user });
+        if (existingIdea && existingUser) {
             return res.status(400).json({ message: 'Idea already exists' });
         }
 
