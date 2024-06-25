@@ -2,16 +2,12 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const saltRounds = 10;
-const {sendWelcomeEmail} = require('../mails/welcomeMail');
 
 const signUp = async (req, res) => {
     try {
-        const {
-            email,
-            password,
-        } = req.body;
+        const { email, password } = req.body;
 
-        const existingUser = await User.findOne({ $or: [{ email }] });
+        const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: 'Email already exists' });
         }
@@ -27,14 +23,10 @@ const signUp = async (req, res) => {
         res.json({ status: 'ok' });
     } catch (err) {
         console.error('Signup error:', err);
-        res.status(500).json({ status: 'error', message: 'Failed to register user' });
+        if (!res.headersSent) {
+            res.status(500).json({ status: 'error', message: 'Failed to register user' });
+        }
     }
-    try {
-        await sendWelcomeEmail(email);
-        res.status(201).send({ message: 'User registered and welcome email sent!' });
-      } catch (error) {
-        res.status(500).send({ message: 'User registered but failed to send email.' });
-      }
 };
 
 const login = async (req, res) => {
@@ -44,7 +36,7 @@ const login = async (req, res) => {
         if (user) {
             const match = await bcrypt.compare(password, user.password);
             if (match) {
-                const token = jwt.sign({ email: user.email}, "jwt-key", { expiresIn: '1h' });
+                const token = jwt.sign({ email: user.email }, "jwt-key", { expiresIn: '1h' });
                 res.json({ token, status: 'ok' });
             } else {
                 return res.status(400).json({ status: 'error', message: 'Invalid email or password' });
